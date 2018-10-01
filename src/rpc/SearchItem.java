@@ -50,10 +50,11 @@ public class SearchItem extends HttpServlet {
 		String term = request.getParameter("term");
 		
 		List<Item> item_list = conn.searchItems(userId, lat, lon, term);
+		Set<String> favorite = conn.getFavoriteItemIds(userId);
 		List<JSONObject> json_list = new ArrayList<>();
 		try {
 			for (Item item : item_list) {
-				json_list.add(item.toJSONObject());
+				json_list.add(item.toJSONObject().put("favorite", favorite.contains(item.getItemId())));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

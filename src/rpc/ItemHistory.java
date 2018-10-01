@@ -62,14 +62,20 @@ public class ItemHistory extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			JSONObject input = RpcHelper.readJSONObject(request);
-			String userId = input.getString("user_id");
-			JSONArray array = (JSONArray) input.get("favorite");
-			List<String> histories = new ArrayList<String>();
-			for (int i = 0; i < array.length(); i++) {
-				histories.add((String) array.get(i));
+			if (input.has("user_id") && input.has("favorite")) {
+				String userId = input.getString("user_id");
+				JSONArray array = (JSONArray) input.get("favorite");
+				List<String> histories = new ArrayList<String>();
+				for (int i = 0; i < array.length(); i++) {
+					histories.add((String) array.get(i));
+				}
+				conn.setFavoriteItems(userId, histories);
+				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "OK"));
+			} else {
+				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "Invalid Parameter"));
 			}
-			conn.setFavoriteItems(userId, histories);
-			RpcHelper.writeJsonObject(response, new JSONObject().put("result", "SUCCESS"));
+			
+			
 			
 			
 		} catch (JSONException e) {
@@ -82,14 +88,18 @@ public class ItemHistory extends HttpServlet {
 		throws ServletException, IOException {
 		try {
 			JSONObject input = RpcHelper.readJSONObject(request);
-			String userId = input.getString("user_id");
-			JSONArray array = (JSONArray) input.get("favorite");
-			List<String> histories = new ArrayList<String>();
-			for (int i = 0; i < array.length(); i++) {
-				histories.add((String) array.get(i)); 
+			if (input.has("user_id") && input.has("favorite")) {
+				String userId = input.getString("user_id");
+				JSONArray array = (JSONArray) input.get("favorite");
+				List<String> histories = new ArrayList<String>();
+				for (int i = 0; i < array.length(); i++) {
+					histories.add((String) array.get(i)); 
+				}
+				conn.unsetFavoriteItems(userId, histories);
+				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "OK"));
+			} else {
+				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "Invalid Parameter"));
 			}
-			conn.unsetFavoriteItems(userId, histories);
-			RpcHelper.writeJsonObject(response, new JSONObject().put("result", "SUCCESS"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
